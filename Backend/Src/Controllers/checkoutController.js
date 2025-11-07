@@ -2,23 +2,19 @@ import * as CartItem from "../Models/CartItem.js";
 import { all, run } from "../Config/db.js";
 import { v4 as uuidv4 } from "uuid";
 
-/**
- * Compute total securely using product prices from DB
- */
-async function computeTotalFromCartItems(cartItems) {
-  if (!cartItems || cartItems.length === 0) return 0;
-
-  // Build list of productIds, query them in one go
-  const ids = cartItems.map((ci) => `'${ci.productId}'`).join(",");
-  const rows = await all(`SELECT id, price FROM products WHERE id IN (${ids})`);
-  const priceMap = {};
-  rows.forEach((r) => (priceMap[r.id] = r.price));
-  let total = 0;
-  cartItems.forEach((ci) => {
-    const price = priceMap[ci.productId] || 0;
-    total += price * ci.qty;
+// Fetch product metadata (name, image, price) for a list of ids
+async function getProductsByIds(productIds) {
+  if (!productIds || productIds.length === 0) return {};
+  const placeholders = productIds.map(() => "?").join(",");
+  const rows = await all(
+    `SELECT id, name, image, price FROM products WHERE id IN (${placeholders})`,
+    productIds
+  );
+  const productMap = {};
+  rows.forEach((r) => {
+    productMap[r.id] = { name: r.name, image: r.image, price: r.price };
   });
-  return total;
+  return productMap;
 }
 
 export const checkout = async (req, res, next) => {
@@ -33,14 +29,23 @@ export const checkout = async (req, res, next) => {
       return res.status(400).json({ error: "Cart is empty" });
     }
 
-    // Prepare cart items for receipt (only productId and qty)
+    // Enrich with product metadata directly from products table
+    const productIds = cart.items.map((ci) => ci.productId);
+    const productMap = await getProductsByIds(productIds);
+
+    // Prepare cart items for receipt with reliable name/image
     const cartItems = cart.items.map((item) => ({
       productId: item.productId,
       qty: item.qty,
+      name: productMap[item.productId]?.name || item.name || null,
+      image: productMap[item.productId]?.image || item.image || null,
     }));
 
     // Compute total securely using product prices from DB
-    const total = await computeTotalFromCartItems(cartItems);
+    const total = cartItems.reduce((sum, ci) => {
+      const price = productMap[ci.productId]?.price || 0;
+      return sum + price * (ci.qty || 0);
+    }, 0);
 
     // Create receipt
     const receipt = {

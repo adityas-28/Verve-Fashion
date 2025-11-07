@@ -51,7 +51,7 @@ export default function ReceiptModal({ receipt }) {
             <ul className="space-y-1 text-sm text-gray-600">
               {receipt.cartItems.map((item, idx) => (
                 <li key={idx}>
-                  • {item.name || `Product ${item.productId}`} × {item.qty}
+                  • {item.name || `Product ${item.name}`} × {item.qty}
                 </li>
               ))}
             </ul>
