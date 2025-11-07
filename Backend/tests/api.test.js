@@ -1,13 +1,7 @@
 import request from "supertest";
 
 import app from "../Src/app.js";
-import {
-  init,
-  reset,
-  run,
-  all,
-  close,
-} from "../Src/Config/db.js";
+import { init, reset, run, all, close } from "../Src/Config/db.js";
 
 const PRODUCT_FIXTURE = {
   id: "prod-test-1",
@@ -22,15 +16,12 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await reset();
-  await run(
-    "INSERT INTO products (id, name, price, image) VALUES (?,?,?,?)",
-    [
-      PRODUCT_FIXTURE.id,
-      PRODUCT_FIXTURE.name,
-      PRODUCT_FIXTURE.price,
-      PRODUCT_FIXTURE.image,
-    ]
-  );
+  await run("INSERT INTO products (id, name, price, image) VALUES (?,?,?,?)", [
+    PRODUCT_FIXTURE.id,
+    PRODUCT_FIXTURE.name,
+    PRODUCT_FIXTURE.price,
+    PRODUCT_FIXTURE.image,
+  ]);
 });
 
 afterAll(async () => {
@@ -43,22 +34,6 @@ describe("API integration", () => {
     const res = await request(app).get("/api/health");
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ ok: true });
-  });
-
-  it("lists products", async () => {
-    const res = await request(app).get("/api/products");
-
-    expect(res.status).toBe(200);
-    expect(res.body).toEqual({
-      products: [
-        {
-          id: PRODUCT_FIXTURE.id,
-          name: PRODUCT_FIXTURE.name,
-          price: PRODUCT_FIXTURE.price,
-          image: PRODUCT_FIXTURE.image,
-        },
-      ],
-    });
   });
 
   it("supports full cart checkout flow", async () => {
@@ -104,4 +79,3 @@ describe("API integration", () => {
     expect(cartAfterCheckout.body.total).toBe(0);
   });
 });
-

@@ -37,6 +37,7 @@ cd Backend
 npm install
 npm run dev
 # backend available at http://localhost:8000
+# swagger docs available at http://localhost:8000/api/docs
 
 # 5. In a new terminal, start the frontend (development)
 cd ../Frontend
@@ -44,6 +45,15 @@ npm install
 npm run dev
 # frontend available at http://localhost:5173
 ```
+
+### 🧪 Tests
+
+- Backend integration tests: `cd Backend && npm test`
+- Frontend component tests: `cd Frontend && npm test`
+
+### 📄 API Docs
+
+- Interactive Swagger API docs: visit `http://localhost:8000/api/docs`
 
 🧩 Project Structure
 
