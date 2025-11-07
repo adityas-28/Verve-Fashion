@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
+import { Trash2, Plus, Minus } from "lucide-react";
 
 export default function CartItem({ item }) {
   const { updateCartItem, removeFromCart } = useCart();
@@ -35,49 +36,81 @@ export default function CartItem({ item }) {
   const itemTotal = (item.price || 0) * (item.qty || 0);
 
   return (
-    <div className="border border-gray-200 rounded-lg p-4 mb-4 bg-white shadow-sm">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex-1">
-          <h3 className="font-semibold text-lg mb-1">
-            {item.name || "Product"}
-          </h3>
-          <p className="text-gray-600">
-            Price: ₹{item.price?.toFixed(2) || "0.00"}
-          </p>
+    <div className="border border-black rounded-xl bg-white p-5 mb-4 hover:shadow-[4px_4px_0px_#A3E635] transition-all duration-200">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+        {/* 🧢 Product Info */}
+        <div className="flex items-center gap-4 flex-1">
+          {/* Thumbnail */}
+          <div className="w-24 h-24 bg-gray-100 border border-black rounded-lg flex items-center justify-center overflow-hidden">
+            {item.image ? (
+              <img
+                src={
+                  item.image.startsWith("http")
+                    ? item.image
+                    : `Public/images/${item.image}.jpg`
+                }
+                alt={item.name}
+                className="object-cover w-full h-full"
+              />
+            ) : (
+              <span className="text-gray-400 text-3xl">👕</span>
+            )}
+          </div>
+
+          {/* Details */}
+          <div>
+            <h3 className="text-lg font-bold uppercase tracking-tight">
+              {item.name || "Product"}
+            </h3>
+            <p className="text-gray-700 text-sm">
+              Price:{" "}
+              <span className="font-semibold">₹{item.price?.toFixed(2)}</span>
+            </p>
+            <p className="text-gray-700 text-sm">
+              Subtotal:{" "}
+              <span className="text-lime-600 font-bold">
+                ₹{itemTotal.toFixed(2)}
+              </span>
+            </p>
+          </div>
         </div>
 
+        {/* 🧮 Quantity Controls */}
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Qty:</label>
+          <div className="flex items-center border border-black rounded-full px-3 py-1 bg-white">
             <button
-              className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center disabled:opacity-50"
+              className="p-1.5 rounded-full hover:bg-lime-100 text-black disabled:opacity-50"
               onClick={() => handleUpdateQty((item.qty || 0) - 1)}
               disabled={updating || removing || (item.qty || 0) <= 1}
             >
-              −
+              <Minus size={16} />
             </button>
-            <span className="w-12 text-center font-semibold">
+            <span className="w-8 text-center font-semibold">
               {item.qty || 0}
             </span>
             <button
-              className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center disabled:opacity-50"
+              className="p-1.5 rounded-full hover:bg-lime-100 text-black disabled:opacity-50"
               onClick={() => handleUpdateQty((item.qty || 0) + 1)}
               disabled={updating || removing}
             >
-              +
+              <Plus size={16} />
             </button>
           </div>
 
-          <div className="text-right">
-            <p className="font-bold text-lg">₹{itemTotal.toFixed(2)}</p>
-          </div>
-
+          {/* 🗑️ Remove Button */}
           <button
-            className="text-red-600 hover:text-red-700 px-3 py-1 rounded disabled:opacity-50"
             onClick={handleRemove}
             disabled={removing || updating}
+            className="flex items-center gap-1.5 bg-black text-white hover:bg-lime-400 hover:text-black px-4 py-2 rounded-lg font-medium transition-all duration-200 disabled:opacity-50"
           >
-            {removing ? "..." : "Remove"}
+            {removing ? (
+              <span className="animate-pulse text-gray-300">Removing...</span>
+            ) : (
+              <>
+                <Trash2 size={16} />
+                <span>Remove</span>
+              </>
+            )}
           </button>
         </div>
       </div>

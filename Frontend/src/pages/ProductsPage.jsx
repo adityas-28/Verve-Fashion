@@ -52,6 +52,12 @@ export default function ProductsPage() {
           products.map((p) => <ProductCard key={p.id} product={p} />)
         )}
       </div>
+
+      <footer className="text-center border-t border-gray-200 py-8">
+          <p className="text-gray-500 text-sm">
+          Verve. Be the vibe. 🛍️
+          </p>
+        </footer>
     </div>
   );
 }

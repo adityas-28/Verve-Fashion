@@ -1,4 +1,3 @@
-// src/controllers/cartController.js
 import * as CartItem from "../Models/CartItem.js";
 
 export const getCart = async (req, res, next) => {

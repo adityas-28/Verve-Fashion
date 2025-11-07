@@ -1,44 +1,31 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { ShoppingCart } from "lucide-react";
 
 export default function Navbar() {
-  const { cart, total } = useCart();
+  const { cart } = useCart();
   const cartItemCount = cart.reduce((sum, item) => sum + (item.qty || 0), 0);
 
   return (
-    <nav className="bg-blue-600 text-white shadow-lg">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center py-4">
+    <nav className="sticky top-0 z-50 bg-white border-b border-black">
+      {/* Top Lime Bar / Logo */}
+      <div className="bg-lime-500 text-black font-extrabold text-xl px-6 py-3 flex justify-between items-center">
+        <Link to="/" className="tracking-tight">
+        VERVE.
+        </Link>
+        <div className="flex items-center gap-4">
           <Link
-            to="/"
-            className="font-bold text-2xl hover:text-blue-200 transition-colors"
+            to="/cart"
+            className="relative flex items-center gap-2 font-semibold text-black hover:underline underline-offset-4 transition-all"
           >
-            🛍️ E-Commerce
-          </Link>
-          <div className="flex gap-6 items-center">
-            <Link
-              to="/"
-              className="hover:text-blue-200 transition-colors font-medium"
-            >
-              Products
-            </Link>
-            <Link
-              to="/cart"
-              className="hover:text-blue-200 transition-colors font-medium flex items-center gap-2"
-            >
-              <span>🛒 Cart</span>
-              {cartItemCount > 0 && (
-                <span className="bg-white text-blue-600 px-2 py-1 rounded-full text-sm font-bold">
-                  {cartItemCount}
-                </span>
-              )}
-            </Link>
-            {total > 0 && (
-              <span className="text-sm bg-blue-700 px-3 py-1 rounded">
-                ₹{total.toFixed(2)}
+            <ShoppingCart className="w-5 h-5" />
+            Cart
+            {cartItemCount > 0 && (
+              <span className="absolute -top-2 -right-3 bg-black text-white text-xs font-bold px-2 py-[1px] rounded-full">
+                {cartItemCount}
               </span>
             )}
-          </div>
+          </Link>
         </div>
       </div>
     </nav>

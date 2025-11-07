@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 async function getCart() {
   const rows = await all(
-    `SELECT c.id, c.productId, c.qty, p.name, p.price
+    `SELECT c.id, c.productId, c.qty, p.name, p.price, p.image
      FROM cart c LEFT JOIN products p ON c.productId = p.id`
   );
   const items = rows.map((r) => ({
@@ -12,6 +12,7 @@ async function getCart() {
     qty: r.qty,
     name: r.name,
     price: r.price,
+    image: r.image,
   }));
   const total = items.reduce((s, it) => s + (it.price || 0) * it.qty, 0);
   return { items, total };

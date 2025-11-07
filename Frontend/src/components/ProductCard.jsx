@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
+import { Heart } from "lucide-react";
 
 export default function ProductCard({ product }) {
   const { addToCart } = useCart();
@@ -17,31 +18,56 @@ export default function ProductCard({ product }) {
   };
 
   return (
-    <div className="border border-gray-200 p-4 rounded-xl shadow-md hover:shadow-lg transition-shadow bg-white">
-      <div className="bg-gray-100 h-48 rounded-lg flex items-center justify-center mb-4">
+    <div className="relative border border-black rounded-xl bg-white overflow-hidden hover:-translate-y-1 hover:shadow-[4px_4px_0px_#A3E635] transition-all duration-200">
+      {/* 🏷 Tag */}
+      {product.featured && (
+        <div className="absolute top-3 left-3 bg-black text-white text-xs font-bold px-3 py-1 rounded-full">
+          NEW DROP
+        </div>
+      )}
+
+      {/* 🖼 Product Image */}
+      <div className="h-64 bg-gray-100 flex items-center justify-center border-b border-black">
         {product.image ? (
           <img
-            src={product.image}
+            src={
+              product.image.startsWith("http")
+                ? product.image
+                : `Public/images/${product.image}.jpg`
+            }
             alt={product.name}
-            className="w-full h-full object-cover rounded-lg"
+            className="w-full h-full object-cover"
           />
         ) : (
-          <div className="text-gray-400 text-4xl">📦</div>
+          <div className="text-gray-400 text-4xl">👕</div>
         )}
       </div>
-      <h3 className="font-semibold text-lg mb-2 line-clamp-2">
-        {product.name}
-      </h3>
-      <p className="text-gray-700 text-xl font-bold mb-4">
-        ₹{product.price?.toFixed(2) || "0.00"}
-      </p>
-      <button
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg w-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        onClick={handleAddToCart}
-        disabled={adding}
-      >
-        {adding ? "Adding..." : "Add to Cart"}
-      </button>
+
+      {/* 💬 Product Info */}
+      <div className="p-5">
+        <div className="flex justify-between items-start mb-3">
+          <h3 className="text-lg font-bold uppercase tracking-tight">
+            {product.name}
+          </h3>
+          {/* <button className="text-gray-400 hover:text-pink-500 transition-colors">
+            <Heart size={18} />
+          </button> */}
+        </div>
+
+        {/* 💰 Price */}
+        <p className="text-gray-700 font-semibold mb-4">
+          ₹{product.price?.toFixed(2) || "0.00"}
+        </p>
+
+        {/* 🛒 Add to Cart */}
+        <button
+          onClick={handleAddToCart}
+          disabled={adding}
+          className="w-full bg-black text-white font-semibold py-2.5 rounded-lg border border-black hover:bg-lime-400 hover:text-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {adding ? "Adding..." : "Add to Cart"}
+        </button>
+      </div>
     </div>
   );
 }
