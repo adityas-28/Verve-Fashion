@@ -50,8 +50,11 @@ export async function init() {
   await run(`CREATE TABLE IF NOT EXISTS products (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
-    price REAL NOT NULL
+    price REAL NOT NULL,
+    image TEXT
   );`);
+  // Ensure legacy databases have the image column
+  await run(`ALTER TABLE products ADD COLUMN image TEXT`, []).catch(() => {});
   await run(`CREATE TABLE IF NOT EXISTS cart (
     id TEXT PRIMARY KEY,
     productId TEXT NOT NULL,
@@ -68,6 +71,22 @@ export async function init() {
     name TEXT,
     email TEXT
   );`);
+}
+
+export async function reset() {
+  await run("DELETE FROM cart");
+  await run("DELETE FROM receipts");
+  await run("DELETE FROM products");
+  await run("DELETE FROM users");
+}
+
+export function close() {
+  return new Promise((resolve, reject) => {
+    db.close((err) => {
+      if (err) return reject(err);
+      resolve();
+    });
+  });
 }
 
 export default db;
